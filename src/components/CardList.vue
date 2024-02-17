@@ -4,12 +4,15 @@
       <Search color="#7b7b7b" />
       <input type="text" class="outline-none" v-model="search" />
     </div>
-    <button @click="collapseAll" class="border rounded-md p-2 active:border-cyan-500 active:scale-95 transition-transform">
+    <button
+      @click="collapseAll"
+      class="border rounded-md p-2 active:border-cyan-500 active:scale-95 transition-transform"
+    >
       <Collapse color="#7b7b7b" />
     </button>
   </div>
   <ul v-if="filteredFaq.length > 0" class="flex flex-col gap-2">
-    <CardItem v-for="item in filteredFaq" :answer="item.answer" :question="item.question" />
+    <CardItem v-for="faq in filteredFaq" :faq="faq" />
   </ul>
   <div v-else>
     <p>
@@ -21,16 +24,18 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue';
 
-import faq from '../data/faq';
 import Search from '../icons/Search.vue';
 import CardItem from './CardItem.vue';
 import Collapse from '../icons/Collapse.vue';
+import type { Faq } from '../interfaces/Faq';
 
-const filteredFaq = ref(faq);
+const props = defineProps<{ faqs: Faq[] }>();
+
+const filteredFaq = ref(props.faqs);
 const search = ref('');
 
 watchEffect(() => {
-  filteredFaq.value = faq.filter((item) => {
+  filteredFaq.value = props.faqs.filter((item) => {
     return item.question.toLowerCase().includes(search.value.toLowerCase());
   });
 });
